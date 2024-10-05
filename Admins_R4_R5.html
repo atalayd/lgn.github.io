@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<title>Legionnaires</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+	<noscript>
+		<link rel="stylesheet" href="assets/css/noscript.css" />
+	</noscript>
+</head>
+
+<body class="landing is-preload">
+
+	<!-- Page content goes here -->
+
+	<!-- Footer -->
+	<footer id="footer">
+		<ul class="copyright">
+			<li>&copy; LGN Website</li>
+			<li>Design: <a href="">Mystic</a></li>
+		</ul>
+	</footer>
+
+	<!-- Scripts -->
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/jquery.scrollex.min.js"></script>
+	<script src="assets/js/jquery.scrolly.min.js"></script>
+	<script src="assets/js/browser.min.js"></script>
+	<script src="assets/js/breakpoints.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
+
+	<!-- Custom Script - PASTE THIS HERE -->
+	<script>
+		let debugMode = true; // Turn on to bypass login for testing
+
+		document.getElementById('login-button').addEventListener('click', function () {
+			if (debugMode) {
+				// Simulate logging in as R5 for testing
+				localStorage.setItem('rank', 'R5');
+				localStorage.setItem('username', 'admin');
+				window.location.href = "Admins_R4_R5.html"; // Directly redirect to the admin page
+			} else {
+				document.getElementById('login-section').style.display = 'block';
+				document.getElementById('banner').style.display = 'none';
+			}
+		});
+
+		// Handle login (for non-debug mode)
+		document.getElementById('login-form')?.addEventListener('submit', function (e) {
+			e.preventDefault();
+			const username = document.getElementById('username').value;
+			const password = document.getElementById('password').value;
+			const storedUsername = localStorage.getItem('username');
+			const storedPassword = localStorage.getItem('password');
+			const storedRank = localStorage.getItem('rank');
+
+			if (username === storedUsername && password === storedPassword) {
+				alert('Login successful!');
+				showEventInfo(storedRank);
+			} else {
+				alert('Incorrect username or password.');
+			}
+		});
+
+		// Show event info based on rank (for non-debug mode)
+		function showEventInfo(rank) {
+			document.getElementById('login-section')?.style.display = 'none';
+			document.getElementById('event-info')?.style.display = 'block';
+
+			// Show admin tab if user is R4 or R5
+			if (rank === 'R4' || rank === 'R5') {
+				document.getElementById('admin-tab').style.display = 'block';
+			}
+
+			// Show admin section if R5
+			if (rank === 'R5') {
+				document.getElementById('admin-link').addEventListener('click', function () {
+					document.getElementById('admin-section').style.display = 'block';
+					document.getElementById('event-info').style.display = 'none'; // Hide event info for admin dashboard view
+					loadAccountRequests(); // Load pending requests
+				});
+			}
+		}
+
+		// Load account requests (mock data for testing)
+		function loadAccountRequests() {
+			const accountRequests = [
+				{ username: 'newUser1', rank: 'R1', status: 'pending' },
+				{ username: 'newUser2', rank: 'R1', status: 'pending' }
+			];
+
+			const requestList = document.getElementById('account-requests');
+			requestList.innerHTML = ''; // Clear any existing items
+
+			accountRequests.forEach(request => {
+				const listItem = document.createElement('li');
+				listItem.textContent = `${request.username} (Rank: ${request.rank}) - Status: ${request.status}`;
+				requestList.appendChild(listItem);
+			});
+
+			document.getElementById('approve-all').style.display = 'block';
+		}
+
+		// Simulate approving all requests
+		document.getElementById('approve-all').addEventListener('click', function () {
+			alert('All requests approved!');
+		});
+
+	</script>
+</body>
+
+</html>

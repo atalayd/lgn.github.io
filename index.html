@@ -1,0 +1,274 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<title>Legionnaires</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+	<noscript>
+		<link rel="stylesheet" href="assets/css/noscript.css" />
+	</noscript>
+
+	<!-- Add styles directly to HTML or in your CSS file -->
+	<style>
+		/* Styling for server time input */
+		#server-time {
+			background-color: #333;
+			color: #fff;
+			border: 1px solid #888;
+			padding: 5px;
+			font-size: 16px;
+		}
+
+		/* Styling for timezone selector */
+		#timezone-selector {
+			background-color: #333;
+			color: #fff;
+			border: 1px solid #888;
+			padding: 5px;
+			font-size: 16px;
+			width: 100%;
+		}
+
+		/* Styling for the converted time display */
+		#converted-time {
+			font-size: 18px;
+			color: #fff;
+		}
+	</style>
+</head>
+
+<body class="landing is-preload">
+
+	<!-- Page Wrapper -->
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<header id="header" class="alt">
+			<h1><a href="index.html">Legionnaires</a></h1>
+			<nav id="nav">
+				<ul>
+					<li class="special">
+						<a href="#menu" class="menuToggle"><span>Menu</span></a>
+						<div id="menu">
+							<ul>
+								<li><a href="index.html">Home</a></li>
+								<li><a href="generic.html">Schedule</a></li>
+								<li><a href="elements.html">Events</a></li>
+								<li id="admin-tab" style="display: none;"><a href="Admins_R4_R5.html">Admins R4 - R5</a>
+								</li>
+								<li><a href="#">Sign Up</a></li>
+								<li><a href="#">Log In</a></li>
+							</ul>
+						</div>
+					</li>
+				</ul>
+			</nav>
+		</header>
+
+		<!-- Banner -->
+		<section id="banner">
+			<div class="inner">
+				<h2>Legionnaires</h2>
+				<p> Nation# 1209</p>
+				<ul class="actions special">
+					<li><a href="#" class="button primary">Login</a></li>
+				</ul>
+			</div>
+			<a href="#one" class="more scrolly">Learn More</a>
+		</section>
+
+		<!-- Section One with Server Time Converter -->
+		<section id="one" class="wrapper style1 special">
+			<div class="inner">
+				<header class="major">
+					<h2>Brave Warriors of Legionnaires<br />Welcome</h2>
+					<p>Please login to see detailed information about upcoming events.<br />Check in daily!</p>
+				</header>
+
+				<!-- Server Time Converter Section -->
+				<div>
+					<h3>Server Time (UTC):</h3>
+					<!-- Input for Server Time (24-hour format) -->
+					<input type="time" id="server-time" value="23:00" step="60">
+
+					<!-- Timezone Selector with Additional Time Zones -->
+					<h3>Select Your Timezone:</h3>
+					<select id="timezone-selector" size="6">
+						<option value="Europe/Warsaw">Warsaw (Poland)</option>
+						<option value="Europe/Moscow">Moscow (Russia)</option>
+						<option value="Asia/Seoul">Seoul (South Korea)</option>
+						<option value="Asia/Taipei">Taipei (Taiwan)</option>
+						<option value="Asia/Shanghai">Shanghai (China)</option>
+						<option value="Africa/Cairo">Cairo (Egypt)</option>
+						<option value="America/New_York">Eastern Time (EST)</option>
+						<option value="Europe/London">London (GMT)</option>
+						<option value="Asia/Tokyo">Tokyo (JST)</option>
+						<option value="Australia/Sydney">Sydney (AEST)</option>
+						<option value="Europe/Berlin">Berlin (CET)</option>
+					</select>
+
+					<!-- Display Converted Time -->
+					<h3>Your Local Time:</h3>
+					<p id="converted-time">Select a timezone</p>
+				</div>
+			</div>
+		</section>
+
+		<!-- Section Two -->
+		<section id="two" class="wrapper alt style2">
+			<!-- Ruins Section -->
+			<section class="spotlight">
+				<div class="image">
+					<img src="images1\Ruins.webp" alt="Ruins Battlefield" />
+				</div>
+				<div class="content">
+					<h2>Ruins</h2>
+					<p id="ruins-schedule">Ruins are every day at 14:00 server time.</p>
+					<button id="ruins-edit-btn" onclick="editSchedule('ruins')">Edit</button>
+					<input type="text" id="ruins-input" style="display:none;" placeholder="Update Ruins Schedule">
+					<button id="ruins-save-btn" style="display:none;" onclick="saveSchedule('ruins')">Save</button>
+				</div>
+			</section>
+
+			<!-- Elite Wars Section -->
+			<section class="spotlight">
+				<div class="image">
+					<img src="images1\Elite_wars.webp" alt="Elite Wars Battlefield" />
+				</div>
+				<div class="content">
+					<h2>Elite Wars</h2>
+					<p id="elite-schedule">Schedule: Elite Wars</p>
+					<button id="elite-edit-btn" onclick="editSchedule('elite')">Edit</button>
+					<input type="text" id="elite-input" style="display:none;" placeholder="Update Elite Wars Schedule">
+					<button id="elite-save-btn" style="display:none;" onclick="saveSchedule('elite')">Save</button>
+				</div>
+			</section>
+
+			<!-- Zombie Uprise Section -->
+			<section class="spotlight">
+				<div class="image">
+					<img src="images1\Zombie_Uprise.webp" alt="Zombie Uprise Battlefield" />
+				</div>
+				<div class="content">
+					<h2>Zombie Uprise</h2>
+					<p id="zombie-schedule">Fridays at 14:00 server time.</p>
+					<button id="zombie-edit-btn" onclick="editSchedule('zombie')">Edit</button>
+					<input type="text" id="zombie-input" style="display:none;"
+						placeholder="Update Zombie Uprise Schedule">
+					<button id="zombie-save-btn" style="display:none;" onclick="saveSchedule('zombie')">Save</button>
+				</div>
+			</section>
+		</section>
+		<!-- Section Three -->
+		<section id="three" class="wrapper style3 special">
+			<div class="inner">
+				<header class="major">
+					<h2>LGN</h2>
+					<p>LGN was founded on the principles of respect and friendship, with the goal of achieving
+						cross-nation domination. We continue to grow stronger every day with new recruits and alliances.
+					</p>
+				</header>
+				<ul class="features">
+					<li class="icon fa-paper-plane">
+						<h3>Reserved for Viber</h3>
+						<p>Join the LGN Viber Group Chat.</p>
+					</li>
+					<li class="icon solid fa-laptop">
+						<h3>Reserved</h3>
+						<p>Reserved for future content.</p>
+					</li>
+				</ul>
+			</div>
+		</section>
+
+		<!-- Call to Action (CTA) -->
+		<section id="cta" class="wrapper style4">
+			<div class="inner">
+				<header>
+					<h2>Login to see more</h2>
+				</header>
+				<ul class="actions stacked">
+					<li><a href="#" class="button fit primary">Login</a></li>
+					<li><a href="#" class="button fit">Learn More</a></li>
+				</ul>
+			</div>
+		</section>
+
+		<!-- Footer -->
+		<footer id="footer">
+			<ul class="copyright">
+				<li>&copy; LGN Website</li>
+				<li>Design: <a href="#">Mystic</a></li>
+			</ul>
+		</footer>
+
+	</div>
+
+	<!-- Scripts -->
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/jquery.scrollex.min.js"></script>
+	<script src="assets/js/jquery.scrolly.min.js"></script>
+	<script src="assets/js/browser.min.js"></script>
+	<script src="assets/js/breakpoints.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
+	<!-- Time Zone Conversion Script -->
+	<script>
+		const serverTimeInput = document.getElementById("server-time");
+		const timezoneSelector = document.getElementById("timezone-selector");
+		const convertedTimeDisplay = document.getElementById("converted-time");
+
+		timezoneSelector.addEventListener("change", () => {
+			const selectedTimezone = timezoneSelector.value;
+			const serverTimeValue = serverTimeInput.value.split(":");
+
+			// Debug to check the server time input
+			console.log('Server Time Input Value:', serverTimeValue);
+
+			// Create a date object using UTC
+			const serverDate = new Date();
+			serverDate.setUTCHours(serverTimeValue[0], serverTimeValue[1], 0); // Set seconds to 0 explicitly
+
+			// Format the time for the selected time zone in 24-hour format
+			const formattedTime = new Intl.DateTimeFormat('en-US', {
+				timeZone: selectedTimezone,
+				hour: '2-digit',
+				minute: '2-digit',
+				hour12: false // Ensure 24-hour format
+			}).format(serverDate);
+
+			// Debug to check the formatted time
+			console.log('Formatted Time:', formattedTime);
+
+			// Display the converted time without AM/PM and seconds
+			convertedTimeDisplay.textContent = `Local Time: ${formattedTime}`;
+		});
+		function editSchedule(eventType) {
+			// Hide the edit button, show the input and save button
+			document.getElementById(eventType + '-edit-btn').style.display = 'none';
+			document.getElementById(eventType + '-input').style.display = 'inline';
+			document.getElementById(eventType + '-save-btn').style.display = 'inline';
+		}
+
+		function saveSchedule(eventType) {
+			// Get the value from the input field
+			const newSchedule = document.getElementById(eventType + '-input').value;
+
+			// Update the schedule text if the input is not empty
+			if (newSchedule.trim() !== '') {
+				document.getElementById(eventType + '-schedule').innerText = newSchedule;
+			}
+
+			// Hide the input and save button, show the edit button again
+			document.getElementById(eventType + '-edit-btn').style.display = 'inline';
+			document.getElementById(eventType + '-input').style.display = 'none';
+			document.getElementById(eventType + '-save-btn').style.display = 'none';
+		}
+	</script>
+
+
+</body>
+
+</html>
