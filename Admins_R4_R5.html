@@ -2,114 +2,252 @@
 <html>
 
 <head>
-	<title>Legionnaires</title>
+	<title>Admins R4 - R5 Panel</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<link rel="stylesheet" href="assets/css/main.css" />
 	<noscript>
 		<link rel="stylesheet" href="assets/css/noscript.css" />
 	</noscript>
+
+	<style>
+		/* Styling for the user management table */
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		th,
+		td {
+			border: 1px solid #888;
+			padding: 10px;
+			text-align: center;
+		}
+
+		th {
+			background-color: #333;
+			color: #fff;
+		}
+
+		.approve-btn,
+		.reject-btn,
+		.remove-btn,
+		.promote-btn,
+		.demote-btn {
+			padding: 5px 10px;
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			cursor: pointer;
+		}
+
+		.reject-btn,
+		.remove-btn {
+			background-color: #f44336;
+		}
+
+		.promote-btn {
+			background-color: #2196F3;
+		}
+
+		.demote-btn {
+			background-color: #FF9800;
+		}
+
+		.filter-input {
+			padding: 10px;
+			margin: 20px 0;
+			width: 100%;
+			box-sizing: border-box;
+			border: 2px solid #ccc;
+			border-radius: 4px;
+		}
+	</style>
 </head>
 
-<body class="landing is-preload">
+<body>
+	<!-- Page Wrapper -->
+	<div id="page-wrapper">
+		<!-- Header -->
+		<header id="header" class="alt">
+			<h1><a href="Admins_R4_R5.html">Admins R4 - R5</a></h1>
+			<nav id="nav">
+				<ul>
+					<li><a href="index.html">Home</a></li>
+					<li><a href="generic.html">Schedule</a></li>
+					<li><a href="elements.html">Events</a></li>
+					<li><a href="Admins_R4_R5.html">Admins R4 - R5</a></li>
+				</ul>
+			</nav>
+		</header>
 
-	<!-- Page content goes here -->
+		<!-- Content -->
+		<section id="content" class="wrapper style1 special">
+			<div class="inner">
+				<header class="major">
+					<h2>User Management</h2>
+				</header>
 
-	<!-- Footer -->
-	<footer id="footer">
-		<ul class="copyright">
-			<li>&copy; LGN Website</li>
-			<li>Design: <a href="">Mystic</a></li>
-		</ul>
-	</footer>
+				<!-- Search and Filter Input -->
+				<input type="text" id="filter-input" class="filter-input"
+					placeholder="Search users or filter by rank..." onkeyup="filterUsers()" />
+
+				<!-- User List and Account Approval Table -->
+				<table>
+					<thead>
+						<tr>
+							<th>Username</th>
+							<th>Rank</th>
+							<th>Approve</th>
+							<th>Reject</th>
+							<th>Promote</th>
+							<th>Demote</th>
+							<th>Remove</th>
+						</tr>
+					</thead>
+					<tbody id="user-list">
+						<!-- User entries will be dynamically inserted here -->
+					</tbody>
+				</table>
+			</div>
+		</section>
+	</div>
 
 	<!-- Scripts -->
 	<script src="assets/js/jquery.min.js"></script>
-	<script src="assets/js/jquery.scrollex.min.js"></script>
-	<script src="assets/js/jquery.scrolly.min.js"></script>
-	<script src="assets/js/browser.min.js"></script>
-	<script src="assets/js/breakpoints.min.js"></script>
-	<script src="assets/js/util.js"></script>
 	<script src="assets/js/main.js"></script>
 
-	<!-- Custom Script - PASTE THIS HERE -->
 	<script>
-		let debugMode = true; // Turn on to bypass login for testing
+		// Simulated user data and pending requests
+		const users = [
+			{ username: "Mystic", rank: "Admin" },
+			{ username: "NewUser", rank: "Pending" },
+			{ username: "Warrior", rank: "Member" },
+			{ username: "Commander", rank: "R4" }
+		];
 
-		document.getElementById('login-button').addEventListener('click', function () {
-			if (debugMode) {
-				// Simulate logging in as R5 for testing
-				localStorage.setItem('rank', 'R5');
-				localStorage.setItem('username', 'admin');
-				window.location.href = "Admins_R4_R5.html"; // Directly redirect to the admin page
-			} else {
-				document.getElementById('login-section').style.display = 'block';
-				document.getElementById('banner').style.display = 'none';
+		// Populate user list
+		const userList = document.getElementById('user-list');
+		users.forEach(user => {
+			const row = document.createElement('tr');
+
+			const usernameCell = document.createElement('td');
+			usernameCell.textContent = user.username;
+			row.appendChild(usernameCell);
+
+			const rankCell = document.createElement('td');
+			rankCell.textContent = user.rank;
+			row.appendChild(rankCell);
+
+			// Approve button for pending users
+			const approveCell = document.createElement('td');
+			if (user.rank === 'Pending') {
+				const approveButton = document.createElement('button');
+				approveButton.textContent = 'Approve';
+				approveButton.className = 'approve-btn';
+				approveButton.onclick = () => approveUser(user.username);
+				approveCell.appendChild(approveButton);
 			}
+			row.appendChild(approveCell);
+
+			// Reject button for pending users
+			const rejectCell = document.createElement('td');
+			if (user.rank === 'Pending') {
+				const rejectButton = document.createElement('button');
+				rejectButton.textContent = 'Reject';
+				rejectButton.className = 'reject-btn';
+				rejectButton.onclick = () => rejectUser(user.username);
+				rejectCell.appendChild(rejectButton);
+			}
+			row.appendChild(rejectCell);
+
+			// Promote button for eligible users (R4 and below)
+			const promoteCell = document.createElement('td');
+			if (user.rank !== 'Admin' && user.rank !== 'R5') {
+				const promoteButton = document.createElement('button');
+				promoteButton.textContent = 'Promote';
+				promoteButton.className = 'promote-btn';
+				promoteButton.onclick = () => promoteUser(user.username);
+				promoteCell.appendChild(promoteButton);
+			}
+			row.appendChild(promoteCell);
+
+			// Demote button for R4 or higher ranks
+			const demoteCell = document.createElement('td');
+			if (user.rank === 'R4' || user.rank === 'R5') {
+				const demoteButton = document.createElement('button');
+				demoteButton.textContent = 'Demote';
+				demoteButton.className = 'demote-btn';
+				demoteButton.onclick = () => demoteUser(user.username);
+				demoteCell.appendChild(demoteButton);
+			}
+			row.appendChild(demoteCell);
+
+			// Remove button for non-admins
+			const removeCell = document.createElement('td');
+			if (user.rank !== 'Admin') {
+				const removeButton = document.createElement('button');
+				removeButton.textContent = 'Remove';
+				removeButton.className = 'remove-btn';
+				removeButton.onclick = () => removeUser(user.username);
+				removeCell.appendChild(removeButton);
+			}
+			row.appendChild(removeCell);
+
+			userList.appendChild(row);
 		});
 
-		// Handle login (for non-debug mode)
-		document.getElementById('login-form')?.addEventListener('submit', function (e) {
-			e.preventDefault();
-			const username = document.getElementById('username').value;
-			const password = document.getElementById('password').value;
-			const storedUsername = localStorage.getItem('username');
-			const storedPassword = localStorage.getItem('password');
-			const storedRank = localStorage.getItem('rank');
-
-			if (username === storedUsername && password === storedPassword) {
-				alert('Login successful!');
-				showEventInfo(storedRank);
-			} else {
-				alert('Incorrect username or password.');
-			}
-		});
-
-		// Show event info based on rank (for non-debug mode)
-		function showEventInfo(rank) {
-			document.getElementById('login-section')?.style.display = 'none';
-			document.getElementById('event-info')?.style.display = 'block';
-
-			// Show admin tab if user is R4 or R5
-			if (rank === 'R4' || rank === 'R5') {
-				document.getElementById('admin-tab').style.display = 'block';
-			}
-
-			// Show admin section if R5
-			if (rank === 'R5') {
-				document.getElementById('admin-link').addEventListener('click', function () {
-					document.getElementById('admin-section').style.display = 'block';
-					document.getElementById('event-info').style.display = 'none'; // Hide event info for admin dashboard view
-					loadAccountRequests(); // Load pending requests
-				});
+		function approveUser(username) {
+			if (confirm(`Are you sure you want to approve ${username}?`)) {
+				alert(`${username} approved!`);
+				// Update logic to change user rank from Pending to Member/R4/R5
 			}
 		}
 
-		// Load account requests (mock data for testing)
-		function loadAccountRequests() {
-			const accountRequests = [
-				{ username: 'newUser1', rank: 'R1', status: 'pending' },
-				{ username: 'newUser2', rank: 'R1', status: 'pending' }
-			];
+		function rejectUser(username) {
+			if (confirm(`Are you sure you want to reject ${username}?`)) {
+				alert(`${username} rejected!`);
+				// Logic to remove request from pending list
+			}
+		}
 
-			const requestList = document.getElementById('account-requests');
-			requestList.innerHTML = ''; // Clear any existing items
+		function removeUser(username) {
+			if (confirm(`Are you sure you want to remove ${username}?`)) {
+				alert(`${username} removed!`);
+				// Logic to remove user from website
+			}
+		}
 
-			accountRequests.forEach(request => {
-				const listItem = document.createElement('li');
-				listItem.textContent = `${request.username} (Rank: ${request.rank}) - Status: ${request.status}`;
-				requestList.appendChild(listItem);
+		function promoteUser(username) {
+			if (confirm(`Are you sure you want to promote ${username}?`)) {
+				alert(`${username} promoted!`);
+				// Logic to promote the user to the next rank
+			}
+		}
+
+		function demoteUser(username) {
+			if (confirm(`Are you sure you want to demote ${username}?`)) {
+				alert(`${username} demoted!`);
+				// Logic to demote the user to the previous rank
+			}
+		}
+
+		// Filter users based on input
+		function filterUsers() {
+			const filterInput = document.getElementById('filter-input').value.toLowerCase();
+			const rows = document.querySelectorAll('#user-list tr');
+			rows.forEach(row => {
+				const username = row.cells[0].textContent.toLowerCase();
+				const rank = row.cells[1].textContent.toLowerCase();
+				if (username.includes(filterInput) || rank.includes(filterInput)) {
+					row.style.display = '';
+				} else {
+					row.style.display = 'none';
+				}
 			});
-
-			document.getElementById('approve-all').style.display = 'block';
 		}
-
-		// Simulate approving all requests
-		document.getElementById('approve-all').addEventListener('click', function () {
-			alert('All requests approved!');
-		});
-
 	</script>
+
 </body>
 
 </html>
