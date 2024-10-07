@@ -11,7 +11,7 @@
 	</noscript>
 
 	<style>
-		/* Styling for the user management table. */
+		/* Styling for the user management table */
 		table {
 			width: 100%;
 			border-collapse: collapse;
@@ -116,123 +116,62 @@
 	<!-- Scripts -->
 	<script src="assets/js/jquery.min.js"></script>
 	<script src="assets/js/main.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 
 	<script>
-		// Simulated user data and pending requests
-		const users = [
-			{ username: "Mystic", rank: "Admin" },
-			{ username: "NewUser", rank: "Pending" },
-			{ username: "Warrior", rank: "Member" },
-			{ username: "Commander", rank: "R4" }
-		];
+		// Initialize Firebase
+		const firebaseConfig = {
+			// Your Firebase configuration here
+		};
+		firebase.initializeApp(firebaseConfig);
+		const db = firebase.firestore();
 
-		// Populate user list
+		// Fetch users from Firestore
 		const userList = document.getElementById('user-list');
-		users.forEach(user => {
-			const row = document.createElement('tr');
 
-			const usernameCell = document.createElement('td');
-			usernameCell.textContent = user.username;
-			row.appendChild(usernameCell);
+		function fetchUsers() {
+			db.collection('users').get().then(snapshot => {
+				snapshot.forEach(doc => {
+					const user = doc.data();
+					const row = document.createElement('tr');
 
-			const rankCell = document.createElement('td');
-			rankCell.textContent = user.rank;
-			row.appendChild(rankCell);
+					const usernameCell = document.createElement('td');
+					usernameCell.textContent = user.username;
+					row.appendChild(usernameCell);
 
-			// Approve button for pending users
-			const approveCell = document.createElement('td');
-			if (user.rank === 'Pending') {
-				const approveButton = document.createElement('button');
-				approveButton.textContent = 'Approve';
-				approveButton.className = 'approve-btn';
-				approveButton.onclick = () => approveUser(user.username);
-				approveCell.appendChild(approveButton);
-			}
-			row.appendChild(approveCell);
+					const rankCell = document.createElement('td');
+					rankCell.textContent = user.status;  // Assuming 'status' is 'rank'
+					row.appendChild(rankCell);
 
-			// Reject button for pending users
-			const rejectCell = document.createElement('td');
-			if (user.rank === 'Pending') {
-				const rejectButton = document.createElement('button');
-				rejectButton.textContent = 'Reject';
-				rejectButton.className = 'reject-btn';
-				rejectButton.onclick = () => rejectUser(user.username);
-				rejectCell.appendChild(rejectButton);
-			}
-			row.appendChild(rejectCell);
+					// Approve, reject, promote, demote, remove buttons based on rank/status
+					const approveCell = document.createElement('td');
+					if (user.status === 'pending') {
+						const approveButton = document.createElement('button');
+						approveButton.textContent = 'Approve';
+						approveButton.className = 'approve-btn';
+						approveButton.onclick = () => approveUser(doc.id);
+						approveCell.appendChild(approveButton);
+					}
+					row.appendChild(approveCell);
 
-			// Promote button for eligible users (R4 and below)
-			const promoteCell = document.createElement('td');
-			if (user.rank !== 'Admin' && user.rank !== 'R5') {
-				const promoteButton = document.createElement('button');
-				promoteButton.textContent = 'Promote';
-				promoteButton.className = 'promote-btn';
-				promoteButton.onclick = () => promoteUser(user.username);
-				promoteCell.appendChild(promoteButton);
-			}
-			row.appendChild(promoteCell);
+					// Similar setup for reject, promote, demote, and remove buttons
+					// ...
 
-			// Demote button for R4 or higher ranks
-			const demoteCell = document.createElement('td');
-			if (user.rank === 'R4' || user.rank === 'R5') {
-				const demoteButton = document.createElement('button');
-				demoteButton.textContent = 'Demote';
-				demoteButton.className = 'demote-btn';
-				demoteButton.onclick = () => demoteUser(user.username);
-				demoteCell.appendChild(demoteButton);
-			}
-			row.appendChild(demoteCell);
-
-			// Remove button for non-admins
-			const removeCell = document.createElement('td');
-			if (user.rank !== 'Admin') {
-				const removeButton = document.createElement('button');
-				removeButton.textContent = 'Remove';
-				removeButton.className = 'remove-btn';
-				removeButton.onclick = () => removeUser(user.username);
-				removeCell.appendChild(removeButton);
-			}
-			row.appendChild(removeCell);
-
-			userList.appendChild(row);
-		});
-
-		function approveUser(username) {
-			if (confirm(`Are you sure you want to approve ${username}?`)) {
-				alert(`${username} approved!`);
-				// Update logic to change user rank from Pending to Member/R4/R5
-			}
+					userList.appendChild(row);
+				});
+			});
 		}
 
-		function rejectUser(username) {
-			if (confirm(`Are you sure you want to reject ${username}?`)) {
-				alert(`${username} rejected!`);
-				// Logic to remove request from pending list
-			}
+		// Approve user
+		function approveUser(id) {
+			db.collection('users').doc(id).update({ status: 'Member' }).then(() => {
+				alert('User approved');
+				fetchUsers();  // Refresh the user list
+			});
 		}
 
-		function removeUser(username) {
-			if (confirm(`Are you sure you want to remove ${username}?`)) {
-				alert(`${username} removed!`);
-				// Logic to remove user from website
-			}
-		}
-
-		function promoteUser(username) {
-			if (confirm(`Are you sure you want to promote ${username}?`)) {
-				alert(`${username} promoted!`);
-				// Logic to promote the user to the next rank
-			}
-		}
-
-		function demoteUser(username) {
-			if (confirm(`Are you sure you want to demote ${username}?`)) {
-				alert(`${username} demoted!`);
-				// Logic to demote the user to the previous rank
-			}
-		}
-
-		// Filter users based on input
+		// Filter users
 		function filterUsers() {
 			const filterInput = document.getElementById('filter-input').value.toLowerCase();
 			const rows = document.querySelectorAll('#user-list tr');
@@ -246,6 +185,9 @@
 				}
 			});
 		}
+
+		// Fetch users on page load
+		window.onload = fetchUsers;
 	</script>
 
 </body>
