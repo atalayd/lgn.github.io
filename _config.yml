@@ -1,1 +1,16 @@
+# Site settings
+title: LGN Website
+description: >- 
+  Legionnaires Guild website
+baseurl: "" # The subpath of your site (e.g. /blog or /docs), empty if in root
+url: "https://atalayd.github.io/lgn.github.io" # The URL of your site
+
+# Build settings
+markdown: kramdown
+theme: jekyll-theme-primer
+sass:
+  sass_dir: assets/sass
+  style: compressed
+plugins:
+  - jekyll-feed
 
