@@ -1,57 +1,44 @@
-// Separate lists for approved and pending users
-let approvedUsers = [
-    { username: 'Mystic', rank: 'Admin' },
-    { username: 'Warrior', rank: 'Member' },
-    { username: 'Commander', rank: 'R4' },
-];
+import { firestore } from 'firebase-admin';
+import { initializeApp } from 'firebase-admin/app';
+import { onRequest } from 'firebase-functions/v2/https';
 
-let pendingUsers = [];
+initializeApp();
 
-export default function handler(req, res) {
+export default onRequest(async (req, res) => {
+    const usersRef = firestore().collection('users');
+
     if (req.method === 'GET') {
-        // Admin Panel fetches both approved and pending users
-        const allUsers = {
-            approved: approvedUsers,
-            pending: pendingUsers,
-        };
-        return res.status(200).json(allUsers);
-    } else if (req.method === 'POST') {
-        // Register a new user, storing them in pendingUsers list
-        const { username } = req.body;
+        // Fetch both approved and pending users from Firestore
+        const approvedUsersSnapshot = await usersRef.where('status', '==', 'approved').get();
+        const pendingUsersSnapshot = await usersRef.where('status', '==', 'pending').get();
 
-        // Check if the user already exists in either list
-        const existingApprovedUser = approvedUsers.find(user => user.username === username);
-        const existingPendingUser = pendingUsers.find(user => user.username === username);
+        const approvedUsers = approvedUsersSnapshot.docs.map(doc => doc.data());
+        const pendingUsers = pendingUsersSnapshot.docs.map(doc => doc.data());
 
-        if (existingApprovedUser || existingPendingUser) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
+        return res.status(200).json({ approved: approvedUsers, pending: pendingUsers });
 
-        // Add the new user to pendingUsers with default rank 'Pending'
-        pendingUsers.push({ username, rank: 'Pending' });
-        return res.status(201).json({ message: 'User registered, pending admin approval' });
     } else if (req.method === 'PUT') {
-        // Admin is approving or rejecting a pending user
+        // Approve or reject a user
         const { username, action } = req.body;
+        const userSnapshot = await usersRef.where('username', '==', username).get();
 
-        const userIndex = pendingUsers.findIndex(user => user.username === username);
-        if (userIndex === -1) {
-            return res.status(404).json({ message: 'User not found in pending list' });
+        if (userSnapshot.empty) {
+            return res.status(404).json({ message: 'User not found' });
         }
+
+        const userId = userSnapshot.docs[0].id;
 
         if (action === 'approve') {
-            // Move user to approvedUsers list
-            const user = pendingUsers.splice(userIndex, 1)[0]; // Remove from pendingUsers
-            approvedUsers.push({ ...user, rank: 'Member' }); // Add to approvedUsers with rank 'Member'
+            await usersRef.doc(userId).update({ status: 'approved', rank: 'Member' });
             return res.status(200).json({ message: `User ${username} approved` });
         } else if (action === 'reject') {
-            // Remove user from pendingUsers list
-            pendingUsers.splice(userIndex, 1);
+            await usersRef.doc(userId).delete();
             return res.status(200).json({ message: `User ${username} rejected` });
         } else {
             return res.status(400).json({ message: 'Invalid action' });
         }
+
     } else {
         return res.status(405).json({ message: 'Method not allowed' });
     }
-}
+});
