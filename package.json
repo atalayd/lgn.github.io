@@ -2,10 +2,7 @@
   "name": "lgn-github-io",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "start": "vercel dev",
-    "build": "vercel build"
-  },
+  "scripts": {},
   "dependencies": {
     "firebase": "^10.14.0",
     "firebase-admin": "^12.1.0",
