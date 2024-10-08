@@ -122,9 +122,15 @@
 	<script>
 		// Initialize Firebase
 		const firebaseConfig = {
-			// Your Firebase configuration here
+			apiKey: "AIzaSyAO10w2Fm3NP8dkLrBNwM74_DjXAYEF2HQ",
+			authDomain: "lgn-website-1d982.firebaseapp.com",
+			projectId: "lgn-website-1d982",
+			storageBucket: "lgn-website-1d982.appspot.com",
+			messagingSenderId: "659327392524",
+			appId: "1:659327392524:web:0f7da25c946b6591eb8729",
+			measurementId: "G-9NGSKZ9NP9"
 		};
-		firebase.initializeApp(firebaseConfig);
+		const app = firebase.initializeApp(firebaseConfig);
 		const db = firebase.firestore();
 
 		// Fetch users from Firestore
@@ -154,9 +160,6 @@
 						approveCell.appendChild(approveButton);
 					}
 					row.appendChild(approveCell);
-
-					// Similar setup for reject, promote, demote, and remove buttons
-					// ...
 
 					userList.appendChild(row);
 				});
