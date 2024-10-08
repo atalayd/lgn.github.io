@@ -1,11 +1,27 @@
-export default function handler(req, res) {
-    if (req.method === 'POST') {
-        const { username, password } = req.body;
+// register.js
+import { firestore } from 'firebase-admin';
+import { initializeApp } from 'firebase-admin/app';
+import { onRequest } from 'firebase-functions/v2/https';
 
-        // In a real-world app, you'd store users in a database
-        // Here we simulate saving the user
-        return res.status(201).json({ message: 'User registration successful! Awaiting admin approval.' });
-    } else {
-        return res.status(405).json({ message: 'Method not allowed' });
+initializeApp();
+
+export default onRequest(async (req, res) => {
+    if (req.method !== 'POST') {
+        return res.status(405).send('Method Not Allowed');
     }
-}
+
+    const { username, password } = req.body;
+
+    // Check if the user already exists
+    const usersRef = firestore().collection('users');
+    const existingUser = await usersRef.where('username', '==', username).get();
+
+    if (!existingUser.empty) {
+        return res.status(400).send({ message: 'User already exists' });
+    }
+
+    // Add the user to Firestore (pending approval)
+    await usersRef.add({ username, password, status: 'pending' });
+
+    return res.status(200).send({ message: 'User registration successful! Awaiting admin approval.' });
+});
