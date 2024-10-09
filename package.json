@@ -1,11 +1,13 @@
 {
   "name": "lgn-github-io",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "start": "firebase emulators:start --only functions",
+    "lint": "echo \"Skipping linting\""
+  },
   "dependencies": {
     "firebase": "^10.14.0",
-    "firebase-admin": "^12.6.0",
+    "firebase-admin": "^12.1.0",
     "firebase-functions": "^5.0.0"
   }
 }
