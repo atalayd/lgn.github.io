@@ -11,6 +11,7 @@ exports.loginUser = functions.https.onRequest((req, res) => {
         }
 
         const { username, password } = req.body;
+
         try {
             const usersRef = admin.firestore().collection('users');
             const querySnapshot = await usersRef.where('username', '==', username).where('password', '==', password).get();
@@ -20,11 +21,17 @@ exports.loginUser = functions.https.onRequest((req, res) => {
             }
 
             const user = querySnapshot.docs[0].data();
+
             if (user.status === 'approved') {
+                // Set CORS headers manually to allow requests from the hosting site
+                res.set('Access-Control-Allow-Origin', 'https://lgn-website-1d982.web.app');
+                res.set('Access-Control-Allow-Methods', 'POST');
+                res.set('Access-Control-Allow-Headers', 'Content-Type');
                 return res.status(200).send({ message: 'Login successful', role: user.role });
             } else {
                 return res.status(403).send({ message: 'Account not approved yet.' });
             }
+
         } catch (error) {
             console.error('Error logging in user:', error);
             return res.status(500).send({ message: 'Internal Server Error' });
