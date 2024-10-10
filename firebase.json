@@ -23,6 +23,19 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+    ],
+    "cors": [
+      {
+        "origin": "https://lgn-website-1d982.web.app",
+        "methods": [
+          "GET",
+          "POST",
+          "OPTIONS"
+        ],
+        "headers": [
+          "Content-Type"
+        ]
+      }
     ]
   }
 }
