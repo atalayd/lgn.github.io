@@ -321,7 +321,6 @@
 			</form>
 		</div>
 	</div>
-
 	<!-- Scripts -->
 	<script src="assets/js/jquery.min.js"></script>
 	<script src="assets/js/jquery.scrollex.min.js"></script>
@@ -342,19 +341,16 @@
 			const selectedTimezone = timezoneSelector.value;
 			const serverTimeValue = serverTimeInput.value.split(":");
 
-			// Create a date object using UTC
 			const serverDate = new Date();
 			serverDate.setUTCHours(serverTimeValue[0], serverTimeValue[1], 0); // Set seconds to 0 explicitly
 
-			// Format the time for the selected time zone in 24-hour format
 			const formattedTime = new Intl.DateTimeFormat('en-US', {
 				timeZone: selectedTimezone,
 				hour: '2-digit',
 				minute: '2-digit',
-				hour12: false // Ensure 24-hour format
+				hour12: false
 			}).format(serverDate);
 
-			// Display the converted time without AM/PM and seconds
 			convertedTimeDisplay.textContent = `Local Time: ${formattedTime}`;
 		});
 
@@ -369,52 +365,58 @@
 			});
 		});
 
-		// Close modal function
 		function closeModal() {
 			loginModal.style.display = 'none';
 			createAccountModal.style.display = 'none';
 		}
 
-		// Create account switch
 		document.getElementById('create-account-link').addEventListener('click', () => {
 			loginModal.style.display = 'none';
 			createAccountModal.style.display = 'block';
 		});
 
-		// Handle login form submission
-		document.getElementById('login-form').addEventListener('submit', function (e) {
+		// Handle login with Firebase
+		document.getElementById('login-form').addEventListener('submit', async function (e) {
 			e.preventDefault();
 			const username = document.getElementById('username').value;
 			const password = document.getElementById('password').value;
 
-			// Simulate login
-			if (username === "Mystic" && password === "Atalay55") {
-				document.getElementById('page-wrapper').classList.remove('logged-out');
-				document.getElementById('page-wrapper').classList.add('logged-in');
-				document.getElementById('admin-tab').style.display = 'inline'; // Show Admin Tab
-				loginModal.style.display = 'none';
+			try {
+				const response = await fetch('/api/login', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ username, password })
+				});
 
-				// Display login success message and hide it after 3 seconds
-				const loginSuccessMessage = document.getElementById('login-success-message');
-				loginSuccessMessage.style.display = 'block';
-				setTimeout(() => {
-					loginSuccessMessage.style.display = 'none';
-				}, 3000);
+				if (response.ok) {
+					document.getElementById('page-wrapper').classList.remove('logged-out');
+					document.getElementById('page-wrapper').classList.add('logged-in');
+					document.getElementById('admin-tab').style.display = 'inline';
+					loginModal.style.display = 'none';
 
-				// Hide the login buttons and show logout
-				document.querySelectorAll('.login-section').forEach(el => el.style.display = 'none');
-				document.querySelector('#logout-btn').style.display = 'block';
-				document.querySelector('.menuToggle').style.display = 'inline-block'; // Ensure the Menu button is displayed after login
+					const loginSuccessMessage = document.getElementById('login-success-message');
+					loginSuccessMessage.style.display = 'block';
+					setTimeout(() => {
+						loginSuccessMessage.style.display = 'none';
+					}, 3000);
 
-				// Store the logged-in state in localStorage to persist between page reloads
-				localStorage.setItem('loggedIn', 'true');
-			} else {
-				alert("Incorrect credentials!");
+					document.querySelectorAll('.login-section').forEach(el => el.style.display = 'none');
+					document.querySelector('#logout-btn').style.display = 'block';
+					document.querySelector('.menuToggle').style.display = 'inline-block';
+					localStorage.setItem('loggedIn', 'true');
+				} else {
+					alert("Incorrect credentials!");
+				}
+			} catch (error) {
+				console.error('Error logging in:', error);
+				alert("Login failed.");
 			}
 		});
 
-		// Handle create account form submission
-		document.getElementById('create-account-form').addEventListener('submit', function (e) {
+		// Handle account creation with Firebase
+		document.getElementById('create-account-form').addEventListener('submit', async function (e) {
 			e.preventDefault();
 			const newUsername = document.getElementById('new-username').value;
 			const newPassword = document.getElementById('new-password').value;
@@ -425,40 +427,54 @@
 				return;
 			}
 
-			alert("Account creation request sent for admin approval.");
-			createAccountModal.style.display = 'none';
+			try {
+				const response = await fetch('/api/register', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ username: newUsername, password: newPassword })
+				});
+
+				if (response.ok) {
+					alert("Account creation request sent for admin approval.");
+					createAccountModal.style.display = 'none';
+				} else {
+					alert("Account creation failed.");
+				}
+			} catch (error) {
+				console.error('Error creating account:', error);
+				alert("Account creation failed.");
+			}
 		});
 
 		// Handle logout
 		document.getElementById('logout-btn').addEventListener('click', function () {
 			document.getElementById('page-wrapper').classList.remove('logged-in');
 			document.getElementById('page-wrapper').classList.add('logged-out');
-			document.getElementById('admin-tab').style.display = 'none'; // Hide Admin Tab
+			document.getElementById('admin-tab').style.display = 'none';
 			alert("Logged out!");
 
-			// Show the login buttons and hide logout
 			document.querySelectorAll('.login-section').forEach(el => el.style.display = 'block');
 			document.querySelector('#logout-btn').style.display = 'none';
-			document.querySelector('.menuToggle').style.display = 'none'; // Hide the menu button for logged-out users
-
-			// Clear the logged-in state from localStorage
+			document.querySelector('.menuToggle').style.display = 'none';
 			localStorage.removeItem('loggedIn');
 		});
 
-		// Check if the user is logged in (persistent between page loads)
 		window.onload = function () {
 			if (localStorage.getItem('loggedIn') === 'true') {
 				document.getElementById('page-wrapper').classList.remove('logged-out');
 				document.getElementById('page-wrapper').classList.add('logged-in');
-				document.getElementById('admin-tab').style.display = 'inline'; // Show Admin Tab
+				document.getElementById('admin-tab').style.display = 'inline';
 				document.querySelectorAll('.login-section').forEach(el => el.style.display = 'none');
 				document.querySelector('#logout-btn').style.display = 'block';
-				document.querySelector('.menuToggle').style.display = 'inline-block'; // Ensure menu button is visible after login
+				document.querySelector('.menuToggle').style.display = 'inline-block';
 			} else {
-				document.querySelector('.menuToggle').style.display = 'none'; // Hide the menu button for logged-out users
+				document.querySelector('.menuToggle').style.display = 'none';
 			}
 		};
 	</script>
+
 </body>
 
 </html>
