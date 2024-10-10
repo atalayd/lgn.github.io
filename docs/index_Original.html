@@ -12,13 +12,23 @@
 
 	<!-- Add styles directly to HTML or in your CSS file -->
 	<style>
-		/* Styling for server time input */
+		/* Styling for server time input. */
 		#server-time {
 			background-color: #333;
 			color: #fff;
 			border: 1px solid #888;
 			padding: 5px;
 			font-size: 16px;
+		}
+
+		/* Hide menu button for logged-out users */
+		.logged-out .menuToggle {
+			display: none;
+		}
+
+		/* Show menu button for logged-in users */
+		.logged-in .menuToggle {
+			display: inline-block;
 		}
 
 		/* Styling for timezone selector */
@@ -36,10 +46,79 @@
 			font-size: 18px;
 			color: #fff;
 		}
+
+		/* Styling for login and account modals */
+		#login-modal,
+		#create-account-modal {
+			display: none;
+			position: fixed;
+			z-index: 1;
+			padding-top: 100px;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.5);
+		}
+
+		.modal-content {
+			background-color: #857101;
+			margin: auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 40%;
+			position: relative;
+		}
+
+		/* Close button (X) for the login modal */
+		.close-btn {
+			position: absolute;
+			top: 10px;
+			right: 20px;
+			color: #fff;
+			font-size: 28px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		/* Hiding sections for non-logged-in users */
+		.logged-out #ruins-section,
+		.logged-out #elite-section,
+		.logged-out #zombie-section {
+			display: none;
+		}
+
+		/* Hiding login buttons when logged in */
+		.logged-in .login-btn,
+		.logged-in .login-section {
+			display: none;
+		}
+
+		/* Ensure separation between menu items */
+		#menu ul li {
+			padding-bottom: 10px;
+		}
+
+		/* Styling for the success message */
+		#login-success-message {
+			display: none;
+			background-color: #4CAF50;
+			color: white;
+			padding: 10px;
+			position: fixed;
+			bottom: 10px;
+			right: 10px;
+			z-index: 1000;
+			border-radius: 5px;
+		}
 	</style>
 </head>
 
-<body class="landing is-preload">
+<body class="landing is-preload logged-out" id="page-wrapper">
+
+	<!-- Success Message Div -->
+	<div id="login-success-message">Login successful!</div>
 
 	<!-- Page Wrapper -->
 	<div id="page-wrapper">
@@ -53,13 +132,11 @@
 						<a href="#menu" class="menuToggle"><span>Menu</span></a>
 						<div id="menu">
 							<ul>
-								<li><a href="index.html">Home</a></li>
-								<li><a href="generic.html">Schedule</a></li>
-								<li><a href="elements.html">Events</a></li>
+								<li><a href="index.html" class="home-btn">Home</a></li>
+								<li><a href="generic.html" class="login-btn">Schedule</a></li>
 								<li id="admin-tab" style="display: none;"><a href="Admins_R4_R5.html">Admins R4 - R5</a>
 								</li>
-								<li><a href="#">Sign Up</a></li>
-								<li><a href="#">Log In</a></li>
+								<li id="logout-btn" style="display: none;"><a href="#">Log Out</a></li>
 							</ul>
 						</div>
 					</li>
@@ -72,8 +149,8 @@
 			<div class="inner">
 				<h2>Legionnaires</h2>
 				<p> Nation# 1209</p>
-				<ul class="actions special">
-					<li><a href="#" class="button primary">Login</a></li>
+				<ul class="actions special login-section">
+					<li><a href="#" class="button primary login-btn">Login</a></li>
 				</ul>
 			</div>
 			<a href="#one" class="more scrolly">Learn More</a>
@@ -119,7 +196,7 @@
 		<!-- Section Two -->
 		<section id="two" class="wrapper alt style2">
 			<!-- Ruins Section -->
-			<section class="spotlight">
+			<section id="ruins-section" class="spotlight">
 				<div class="image">
 					<img src="images1\Ruins.webp" alt="Ruins Battlefield" />
 				</div>
@@ -133,7 +210,7 @@
 			</section>
 
 			<!-- Elite Wars Section -->
-			<section class="spotlight">
+			<section id="elite-section" class="spotlight">
 				<div class="image">
 					<img src="images1\Elite_wars.webp" alt="Elite Wars Battlefield" />
 				</div>
@@ -147,7 +224,7 @@
 			</section>
 
 			<!-- Zombie Uprise Section -->
-			<section class="spotlight">
+			<section id="zombie-section" class="spotlight">
 				<div class="image">
 					<img src="images1\Zombie_Uprise.webp" alt="Zombie Uprise Battlefield" />
 				</div>
@@ -161,6 +238,7 @@
 				</div>
 			</section>
 		</section>
+
 		<!-- Section Three -->
 		<section id="three" class="wrapper style3 special">
 			<div class="inner">
@@ -187,10 +265,10 @@
 		<section id="cta" class="wrapper style4">
 			<div class="inner">
 				<header>
-					<h2>Login to see more</h2>
+					<h2 class="login-section">Login to see more</h2>
 				</header>
-				<ul class="actions stacked">
-					<li><a href="#" class="button fit primary">Login</a></li>
+				<ul class="actions stacked login-section">
+					<li><a href="#" class="button fit primary login-btn">Login</a></li>
 					<li><a href="#" class="button fit">Learn More</a></li>
 				</ul>
 			</div>
@@ -206,6 +284,43 @@
 
 	</div>
 
+	<!-- Login Modal (Hidden by Default) -->
+	<div id="login-modal">
+		<div class="modal-content">
+			<span class="close-btn" onclick="closeModal()">×</span> <!-- Close button -->
+			<h2>Login</h2>
+			<form id="login-form">
+				<label for="username">Username:</label>
+				<input type="text" id="username" required>
+
+				<label for="password">Password:</label>
+				<input type="password" id="password" required>
+
+				<button type="submit">Log In</button>
+			</form>
+			<p>Don't have an account? <a href="#" id="create-account-link">Create one</a></p>
+		</div>
+	</div>
+
+	<!-- Create Account Modal (Hidden by Default) -->
+	<div id="create-account-modal">
+		<div class="modal-content">
+			<span class="close-btn" onclick="closeModal()">×</span> <!-- Close button -->
+			<h2>Create an Account</h2>
+			<form id="create-account-form">
+				<label for="new-username">Username:</label>
+				<input type="text" id="new-username" required>
+
+				<label for="new-password">Password (letters and numbers only):</label>
+				<input type="password" id="new-password" required>
+
+				<label for="confirm-password">Confirm Password:</label>
+				<input type="password" id="confirm-password" required>
+
+				<button type="submit">Create Account</button>
+			</form>
+		</div>
+	</div>
 	<!-- Scripts -->
 	<script src="assets/js/jquery.min.js"></script>
 	<script src="assets/js/jquery.scrollex.min.js"></script>
@@ -214,8 +329,10 @@
 	<script src="assets/js/breakpoints.min.js"></script>
 	<script src="assets/js/util.js"></script>
 	<script src="assets/js/main.js"></script>
-	<!-- Time Zone Conversion Script -->
+
+	<!-- Time Zone Conversion Script and Login Script -->
 	<script>
+		// Time Zone Conversion Logic
 		const serverTimeInput = document.getElementById("server-time");
 		const timezoneSelector = document.getElementById("timezone-selector");
 		const convertedTimeDisplay = document.getElementById("converted-time");
@@ -224,50 +341,139 @@
 			const selectedTimezone = timezoneSelector.value;
 			const serverTimeValue = serverTimeInput.value.split(":");
 
-			// Debug to check the server time input
-			console.log('Server Time Input Value:', serverTimeValue);
-
-			// Create a date object using UTC
 			const serverDate = new Date();
 			serverDate.setUTCHours(serverTimeValue[0], serverTimeValue[1], 0); // Set seconds to 0 explicitly
 
-			// Format the time for the selected time zone in 24-hour format
 			const formattedTime = new Intl.DateTimeFormat('en-US', {
 				timeZone: selectedTimezone,
 				hour: '2-digit',
 				minute: '2-digit',
-				hour12: false // Ensure 24-hour format
+				hour12: false
 			}).format(serverDate);
 
-			// Debug to check the formatted time
-			console.log('Formatted Time:', formattedTime);
-
-			// Display the converted time without AM/PM and seconds
 			convertedTimeDisplay.textContent = `Local Time: ${formattedTime}`;
 		});
-		function editSchedule(eventType) {
-			// Hide the edit button, show the input and save button
-			document.getElementById(eventType + '-edit-btn').style.display = 'none';
-			document.getElementById(eventType + '-input').style.display = 'inline';
-			document.getElementById(eventType + '-save-btn').style.display = 'inline';
+
+		// Modal handling
+		const loginModal = document.getElementById('login-modal');
+		const createAccountModal = document.getElementById('create-account-modal');
+		const loginButtons = document.querySelectorAll('.login-btn');
+
+		loginButtons.forEach(button => {
+			button.addEventListener('click', () => {
+				loginModal.style.display = 'block';
+			});
+		});
+
+		function closeModal() {
+			loginModal.style.display = 'none';
+			createAccountModal.style.display = 'none';
 		}
 
-		function saveSchedule(eventType) {
-			// Get the value from the input field
-			const newSchedule = document.getElementById(eventType + '-input').value;
+		document.getElementById('create-account-link').addEventListener('click', () => {
+			loginModal.style.display = 'none';
+			createAccountModal.style.display = 'block';
+		});
 
-			// Update the schedule text if the input is not empty
-			if (newSchedule.trim() !== '') {
-				document.getElementById(eventType + '-schedule').innerText = newSchedule;
+		// Handle login with Firebase
+		document.getElementById('login-form').addEventListener('submit', async function (e) {
+			e.preventDefault();
+			const username = document.getElementById('username').value;
+			const password = document.getElementById('password').value;
+
+			try {
+				const response = await fetch('/api/login', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ username, password })
+				});
+
+				if (response.ok) {
+					document.getElementById('page-wrapper').classList.remove('logged-out');
+					document.getElementById('page-wrapper').classList.add('logged-in');
+					document.getElementById('admin-tab').style.display = 'inline';
+					loginModal.style.display = 'none';
+
+					const loginSuccessMessage = document.getElementById('login-success-message');
+					loginSuccessMessage.style.display = 'block';
+					setTimeout(() => {
+						loginSuccessMessage.style.display = 'none';
+					}, 3000);
+
+					document.querySelectorAll('.login-section').forEach(el => el.style.display = 'none');
+					document.querySelector('#logout-btn').style.display = 'block';
+					document.querySelector('.menuToggle').style.display = 'inline-block';
+					localStorage.setItem('loggedIn', 'true');
+				} else {
+					alert("Incorrect credentials!");
+				}
+			} catch (error) {
+				console.error('Error logging in:', error);
+				alert("Login failed.");
+			}
+		});
+
+		// Handle account creation with Firebase
+		document.getElementById('create-account-form').addEventListener('submit', async function (e) {
+			e.preventDefault();
+			const newUsername = document.getElementById('new-username').value;
+			const newPassword = document.getElementById('new-password').value;
+			const confirmPassword = document.getElementById('confirm-password').value;
+
+			if (newPassword !== confirmPassword) {
+				alert("Passwords do not match.");
+				return;
 			}
 
-			// Hide the input and save button, show the edit button again
-			document.getElementById(eventType + '-edit-btn').style.display = 'inline';
-			document.getElementById(eventType + '-input').style.display = 'none';
-			document.getElementById(eventType + '-save-btn').style.display = 'none';
-		}
-	</script>
+			try {
+				const response = await fetch('/api/register', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ username: newUsername, password: newPassword })
+				});
 
+				if (response.ok) {
+					alert("Account creation request sent for admin approval.");
+					createAccountModal.style.display = 'none';
+				} else {
+					alert("Account creation failed.");
+				}
+			} catch (error) {
+				console.error('Error creating account:', error);
+				alert("Account creation failed.");
+			}
+		});
+
+		// Handle logout
+		document.getElementById('logout-btn').addEventListener('click', function () {
+			document.getElementById('page-wrapper').classList.remove('logged-in');
+			document.getElementById('page-wrapper').classList.add('logged-out');
+			document.getElementById('admin-tab').style.display = 'none';
+			alert("Logged out!");
+
+			document.querySelectorAll('.login-section').forEach(el => el.style.display = 'block');
+			document.querySelector('#logout-btn').style.display = 'none';
+			document.querySelector('.menuToggle').style.display = 'none';
+			localStorage.removeItem('loggedIn');
+		});
+
+		window.onload = function () {
+			if (localStorage.getItem('loggedIn') === 'true') {
+				document.getElementById('page-wrapper').classList.remove('logged-out');
+				document.getElementById('page-wrapper').classList.add('logged-in');
+				document.getElementById('admin-tab').style.display = 'inline';
+				document.querySelectorAll('.login-section').forEach(el => el.style.display = 'none');
+				document.querySelector('#logout-btn').style.display = 'block';
+				document.querySelector('.menuToggle').style.display = 'inline-block';
+			} else {
+				document.querySelector('.menuToggle').style.display = 'none';
+			}
+		};
+	</script>
 
 </body>
 
