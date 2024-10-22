@@ -6,7 +6,8 @@
   "functions": [
     {
       "source": "functions",
-      "codebase": "default",
+      "runtime": "nodejs20",
+      "gen": "gen1",
       "ignore": [
         "node_modules",
         ".git",
@@ -25,10 +26,7 @@
     ],
     "cors": [
       {
-        "origin": [
-          "https://lgn-website-1d982.web.app",
-          "https://lgn-website-1d982.firebaseapp.com"
-        ],
+        "origin": "https://lgn-website-1d982.web.app",
         "methods": [
           "GET",
           "POST",
