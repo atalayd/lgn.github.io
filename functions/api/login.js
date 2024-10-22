@@ -1,6 +1,6 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-const cors = require('cors')({ origin: true });
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+const cors = require("cors")({ origin: true });
 
 admin.initializeApp();
 
@@ -11,9 +11,13 @@ exports.loginUser = functions.https.onRequest((req, res) => {
         }
 
         const { username, password } = req.body;
+
         try {
             const usersRef = admin.firestore().collection('users');
-            const querySnapshot = await usersRef.where('username', '==', username).where('password', '==', password).get();
+            const querySnapshot = await usersRef
+                .where('username', '==', username)
+                .where('password', '==', password)
+                .get();
 
             if (querySnapshot.empty) {
                 return res.status(401).send({ message: 'Login failed. Invalid credentials.' });
