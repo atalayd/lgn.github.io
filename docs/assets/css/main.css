@@ -3166,42 +3166,7 @@ button:disabled,
 	color: #ffffff;
 }
 
-<style>
-
-/* Styling for server time input */
-#server-time {
-	background-color: #333;
-	/* Dark background */
-	color: #fff;
-	/* White text */
-	border: 1px solid #888;
-	/* Border styling */
-	padding: 5px;
-	font-size: 16px;
-}
-
-/* Styling for timezone selector */
-#timezone-selector {
-	background-color: #333;
-	/* Dark background */
-	color: #fff;
-	/* White text */
-	border: 1px solid #888;
-	/* Border styling */
-	padding: 5px;
-	font-size: 16px;
-	width: 100%;
-	/* Makes the select box full width */
-}
-
-/* Styling for the converted time display */
-#converted-time {
-	font-size: 18px;
-	color: #fff;
-	/* White text */
-}
-
-</style>.wrapper.style3 input[type="text"],
+.wrapper.style3 input[type="text"],
 .wrapper.style3 input[type="password"],
 .wrapper.style3 input[type="email"],
 .wrapper.style3 select,
@@ -3601,7 +3566,6 @@ button:disabled,
 	position: absolute;
 	right: 0;
 	top: 0;
-	vertical-align: middle;
 	width: 7em;
 }
 

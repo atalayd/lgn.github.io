@@ -23,7 +23,7 @@
 
 		/* Hide menu button for logged-out users */
 		.logged-out .menuToggle {
-			display: none;
+			display: block;
 		}
 
 		/* Show menu button for logged-in users */
@@ -86,7 +86,7 @@
 		.logged-out #ruins-section,
 		.logged-out #elite-section,
 		.logged-out #zombie-section {
-			display: none;
+			display: block;
 		}
 
 		/* Hiding login buttons when logged in */
@@ -134,7 +134,8 @@
 							<ul>
 								<li><a href="index.html" class="home-btn">Home</a></li>
 								<li><a href="generic.html" class="login-btn">Schedule</a></li>
-								<li id="admin-tab" style="display: none;"><a href="Admins_R4_R5.html">Admins R4 - R5</a>
+								<li id="admin-tab" style="display: block;"><a href="Admins_R4_R5.html">Admins R4 -
+										R5</a>
 								</li>
 								<li id="logout-btn" style="display: none;"><a href="#">Log Out</a></li>
 							</ul>
@@ -360,11 +361,11 @@
 		const createAccountModal = document.getElementById('create-account-modal');
 		const loginButtons = document.querySelectorAll('.login-btn');
 
-		loginButtons.forEach(button => {
-			button.addEventListener('click', () => {
-				loginModal.style.display = 'block';
-			});
-		});
+		// loginButtons.forEach(button => {
+		// 	button.addEventListener('click', () => {
+		// 		loginModal.style.display = 'block';
+		// 	});
+		// });
 
 		function closeModal() {
 			loginModal.style.display = 'none';
@@ -375,47 +376,47 @@
 			loginModal.style.display = 'none';
 			createAccountModal.style.display = 'block';
 		});
-
-		// Handle login with Firebase
-		document.getElementById('login-form').addEventListener('submit', async function (e) {
-			e.preventDefault();
-			const username = document.getElementById('username').value;
-			const password = document.getElementById('password').value;
-
-			try {
-				const response = await fetch('https://us-central1-lgn-website-1d982.cloudfunctions.net/loginUser', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ username, password })
+		/*
+				// Handle login with Firebase
+				document.getElementById('login-form').addEventListener('submit', async function (e) {
+					e.preventDefault();
+					const username = document.getElementById('username').value;
+					const password = document.getElementById('password').value;
+		
+					try {
+						const response = await fetch('https://us-central1-lgn-website-1d982.cloudfunctions.net/loginUser', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify({ username, password })
+						});
+		
+						if (response.ok) {
+							document.getElementById('page-wrapper').classList.remove('logged-out');
+							document.getElementById('page-wrapper').classList.add('logged-in');
+							document.getElementById('admin-tab').style.display = 'inline';
+							loginModal.style.display = 'none';
+		
+							const loginSuccessMessage = document.getElementById('login-success-message');
+							loginSuccessMessage.style.display = 'block';
+							setTimeout(() => {
+								loginSuccessMessage.style.display = 'none';
+							}, 3000);
+		
+							document.querySelectorAll('.login-section').forEach(el => el.style.display = 'none');
+							document.querySelector('#logout-btn').style.display = 'block';
+							document.querySelector('.menuToggle').style.display = 'inline-block';
+							localStorage.setItem('loggedIn', 'true');
+						} else {
+							alert("Incorrect credentials!");
+						}
+					} catch (error) {
+						console.error('Error logging in:', error);
+						alert("Login failed.");
+					}
 				});
-
-				if (response.ok) {
-					document.getElementById('page-wrapper').classList.remove('logged-out');
-					document.getElementById('page-wrapper').classList.add('logged-in');
-					document.getElementById('admin-tab').style.display = 'inline';
-					loginModal.style.display = 'none';
-
-					const loginSuccessMessage = document.getElementById('login-success-message');
-					loginSuccessMessage.style.display = 'block';
-					setTimeout(() => {
-						loginSuccessMessage.style.display = 'none';
-					}, 3000);
-
-					document.querySelectorAll('.login-section').forEach(el => el.style.display = 'none');
-					document.querySelector('#logout-btn').style.display = 'block';
-					document.querySelector('.menuToggle').style.display = 'inline-block';
-					localStorage.setItem('loggedIn', 'true');
-				} else {
-					alert("Incorrect credentials!");
-				}
-			} catch (error) {
-				console.error('Error logging in:', error);
-				alert("Login failed.");
-			}
-		});
-
+		*/
 		// Handle account creation with Firebase
 		document.getElementById('create-account-form').addEventListener('submit', async function (e) {
 			e.preventDefault();
@@ -448,32 +449,34 @@
 				alert("Account creation failed.");
 			}
 		});
-
-		// Handle logout
-		document.getElementById('logout-btn').addEventListener('click', function () {
-			document.getElementById('page-wrapper').classList.remove('logged-in');
-			document.getElementById('page-wrapper').classList.add('logged-out');
-			document.getElementById('admin-tab').style.display = 'none';
-			alert("Logged out!");
-
-			document.querySelectorAll('.login-section').forEach(el => el.style.display = 'block');
-			document.querySelector('#logout-btn').style.display = 'none';
-			document.querySelector('.menuToggle').style.display = 'none';
-			localStorage.removeItem('loggedIn');
-		});
-
-		window.onload = function () {
-			if (localStorage.getItem('loggedIn') === 'true') {
-				document.getElementById('page-wrapper').classList.remove('logged-out');
-				document.getElementById('page-wrapper').classList.add('logged-in');
-				document.getElementById('admin-tab').style.display = 'inline';
-				document.querySelectorAll('.login-section').forEach(el => el.style.display = 'none');
-				document.querySelector('#logout-btn').style.display = 'block';
-				document.querySelector('.menuToggle').style.display = 'inline-block';
-			} else {
-				document.querySelector('.menuToggle').style.display = 'none';
-			}
-		};
+		/*
+				// Handle logout
+				document.getElementById('logout-btn').addEventListener('click', function () {
+					document.getElementById('page-wrapper').classList.remove('logged-in');
+					document.getElementById('page-wrapper').classList.add('logged-out');
+					document.getElementById('admin-tab').style.display = 'none';
+					alert("Logged out!");
+		
+					document.querySelectorAll('.login-section').forEach(el => el.style.display = 'block');
+					document.querySelector('#logout-btn').style.display = 'none';
+					document.querySelector('.menuToggle').style.display = 'none';
+					localStorage.removeItem('loggedIn');
+				});
+				*/
+		/*
+				// window.onload = function () {
+				// 	if (localStorage.getItem('loggedIn') === 'true') {
+				// 		document.getElementById('page-wrapper').classList.remove('logged-out');
+				// 		document.getElementById('page-wrapper').classList.add('logged-in');
+				// 		document.getElementById('admin-tab').style.display = 'inline';
+				// 		document.querySelectorAll('.login-section').forEach(el => el.style.display = 'none');
+				// 		document.querySelector('#logout-btn').style.display = 'block';
+				// 		document.querySelector('.menuToggle').style.display = 'inline-block';
+				// 	} else {
+				// 		document.querySelector('.menuToggle').style.display = 'none';
+				// 	}
+				// };
+		*/
 	</script>
 
 </body>
